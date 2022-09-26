@@ -1,13 +1,29 @@
-import type { NextPage } from 'next';
+import type { GetStaticProps, NextPage } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
+
+import { CoffeeStore } from '../types';
 
 import Banner from '../components/banner';
 import Card from '../components/card';
 
+import COFFEE_STORES from '../data/coffee-stores.json';
+
 import styles from '../styles/Home.module.css';
 
-const Home: NextPage = () => {
+export const getStaticProps: GetStaticProps = async (context) => {
+  return {
+    props: {
+      coffeeStores: COFFEE_STORES,
+    },
+  };
+};
+
+type HomeProps = {
+  coffeeStores: CoffeeStore[];
+};
+
+const Home: NextPage<HomeProps> = ({ coffeeStores }) => {
   const handleOnBannerBtnClick = () => {
     console.log('banner btn clicked');
   };
@@ -34,12 +50,14 @@ const Home: NextPage = () => {
           />
         </div>
         <div className={styles.cardLayout}>
-          <Card
-            className={styles.card}
-            name="DarkHorse Coffee"
-            imgUrl="/static/hero-image.png"
-            href="/coffee-store/darkhorse-coffee"
-          />
+          {coffeeStores.map((coffeeStore) => (
+            <Card
+              key={coffeeStore.id}
+              name={coffeeStore.name}
+              imgUrl={coffeeStore.imgUrl}
+              href={`/coffee-store/${coffeeStore.id}`}
+            />
+          ))}
         </div>
       </main>
     </div>
